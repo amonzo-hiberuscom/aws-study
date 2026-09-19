@@ -1,0 +1,11 @@
+graph LR
+    Eval[Bedrock Model Evaluation] --> Auto[Automatic Evaluation]
+    Eval --> Human[Human Evaluation]
+    
+    Auto --> AutoM[Métricas Algorítmicas / LLM Judge:<br>• Exact Match & F1 Score<br>• ROUGE & BLEU<br>• Toxicity & Accuracy<br>• Builtin.Faithfulness RAG]
+    
+    Human --> SGT[SageMaker Ground Truth Workforces]
+    SGT --> Priv[Private Team: Empleados propios]
+    SGT --> Vend[Vendor: Proveedores certificados]
+    SGT --> Mech[Mechanical Turk: Crowd público]
+    Human --> SubjM[Criterios Subjetivos:<br>• Creatividad & Tono de marca<br>• Calidad de resumen & Estilo]

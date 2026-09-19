@@ -1,0 +1,13 @@
+sequenceDiagram
+    participant User as Usuario / App
+    participant Bedrock as Amazon Bedrock
+    participant Cache as Prompt Cache
+
+    Note over Bedrock,Cache: Prefijo Estático:<br/>Prompt de Sistema extenso + 20 ejemplos Few-Shot<br/>+ Documento Base (5.000 tokens)
+    User->>Bedrock: Llamada 1: [Prefijo Estático] + Pregunta A (50 tokens)
+    Bedrock->>Cache: Almacena prefijo estático en caché
+    Bedrock-->>User: Respuesta A (Coste 100%, Latencia estándar)
+    
+    User->>Bedrock: Llamada 2: [Mismo Prefijo Estático] + Pregunta B (40 tokens)
+    Bedrock->>Cache: Hit en caché para el prefijo estático
+    Bedrock-->>User: Respuesta B (Ahorro: 90% coste de lectura de tokens, 85% menos TTFT)

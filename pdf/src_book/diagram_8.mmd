@@ -1,0 +1,19 @@
+flowchart TB
+    subgraph S1["1. Control Organizacional y Políticas (SCPs)"]
+        Org[AWS Organizations] --> SCP[Service Control Policy SCP]
+        SCP -->|bedrock:GuardrailIdentifier| ForceG[Obliga a usar Guardrail específico en todas las cuentas]
+        SCP -->|aws:RequestedRegion| RestrictR[Restringe inferencia a Regiones autorizadas: eu-west-1, eu-central-1]
+    end
+    
+    subgraph S2["2. Aislamiento de Red y Conectividad Privada"]
+        VPC[VPC Privada] --> VPCE[Interface VPC Endpoint<br/>AWS PrivateLink]
+        VPCE --> BedrockAPI[Amazon Bedrock Runtime Private API]
+    end
+    
+    subgraph S3["3. Gobernanza de Datos y Anonimización (Lake Formation)"]
+        DataLake[Amazon S3 Data Lake] --> LF[AWS Lake Formation]
+        LF -->|LF-Tags / ABAC| AccessControl[Control de acceso por Rol / Departamento]
+        LF -->|Cell-Level Security| Anonymize[Anonimización de columnas PII para LLMs]
+    end
+
+    S1 ~~~ S2 ~~~ S3

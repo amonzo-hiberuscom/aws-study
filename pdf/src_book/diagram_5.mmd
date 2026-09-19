@@ -1,0 +1,12 @@
+flowchart TD
+    In[Prompt de Entrada] --> G1{¿Denied Topics?}
+    G1 -->|Coincide| Block[Respuesta Bloqueada / Mensaje Personalizado]
+    G1 -->|No| G2{¿Content Filters?<br>Hate, Violence, Prompt Attack}
+    G2 -->|Supera umbral| Block
+    G2 -->|No| G3{¿PII / Word Filters?}
+    G3 -->|Block / Mask| Mod1[Enmascara PII o Bloquea]
+    Mod1 --> LLM[Inferencia en Foundation Model]
+    LLM --> Out[Respuesta Generada]
+    Out --> G4{¿Contextual Grounding?<br>Faithfulness & Relevance}
+    G4 -->|Alucinación detectada| Block
+    G4 -->|Válida| FinalUser([Usuario Final])

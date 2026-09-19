@@ -1,0 +1,276 @@
+nav, figure, figcaption { display: block; }
+@page {
+  size: A4;
+  margin: 20mm 18mm 22mm 18mm;
+  @bottom-center {
+    content: counter(page);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 9pt;
+    color: #6b7280;
+  }
+}
+@page :first {
+  margin: 0;
+  @bottom-center { content: none; }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: "Georgia", "Times New Roman", serif;
+  font-size: 10.6pt;
+  line-height: 1.55;
+  color: #232323;
+  background: #ffffff;
+}
+
+/* ---------- Cover page ---------- */
+.cover {
+  page: cover;
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(160deg, #0b2f4c 0%, #143d63 45%, #1b4d7a 100%);
+  color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 26mm 20mm;
+  break-after: page;
+}
+.cover .kicker {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-size: 11pt;
+  color: #8fc4e8;
+  font-weight: 600;
+}
+.cover h1 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 34pt;
+  line-height: 1.15;
+  margin: 8mm 0 4mm 0;
+  font-weight: 700;
+  color: #ffffff;
+}
+.cover .subtitle {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13.5pt;
+  color: #d7e6f2;
+  max-width: 120mm;
+  line-height: 1.5;
+}
+.cover .cover-meta {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 10pt;
+  color: #a9c6dc;
+  border-top: 1px solid rgba(255,255,255,0.25);
+  padding-top: 6mm;
+}
+.cover .cover-badges {
+  display: flex;
+  gap: 6mm;
+  margin-top: 10mm;
+  flex-wrap: wrap;
+}
+.cover .badge {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 9pt;
+  color: #eaf4fb;
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 3px;
+  padding: 2mm 4mm;
+}
+
+/* ---------- TOC ---------- */
+.toc-page {
+  break-after: page;
+}
+.toc-page h2 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 20pt;
+  color: #0b2f4c;
+  border-bottom: 2px solid #0b2f4c;
+  padding-bottom: 3mm;
+  margin-bottom: 8mm;
+}
+#TOC { list-style: none; padding-left: 0; margin: 0; }
+#TOC ul { list-style: none; padding-left: 6mm; margin: 0; }
+#TOC > ul > li { margin-bottom: 4mm; }
+#TOC li a {
+  text-decoration: none;
+  color: #232323;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+#TOC > ul > li > a {
+  font-weight: 700;
+  font-size: 12.5pt;
+  color: #0b2f4c;
+}
+#TOC ul ul li a { font-size: 10pt; color: #4b5563; }
+
+/* ---------- Body typography ---------- */
+h2 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 19pt;
+  color: #0b2f4c;
+  margin-top: 0;
+  padding-top: 4mm;
+  padding-bottom: 3mm;
+  border-bottom: 2.5px solid #0b2f4c;
+  break-before: page;
+  page: chapter;
+}
+@page chapter {
+  @top-right {
+    content: string(chaptertitle);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 8pt;
+    color: #8a94a0;
+  }
+}
+h2 { string-set: chaptertitle content(); }
+
+h3 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 13.5pt;
+  color: #0b2f4c;
+  margin-top: 9mm;
+  margin-bottom: 3mm;
+}
+h4 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 11.5pt;
+  color: #34506b;
+  margin-top: 6mm;
+  margin-bottom: 2mm;
+}
+p { margin: 0 0 3mm 0; text-align: justify; hyphens: auto; }
+strong { color: #111827; }
+em { color: #33475b; }
+hr { display: none; }
+
+ul, ol { margin: 0 0 3mm 0; padding-left: 5.5mm; }
+li { margin-bottom: 1.3mm; }
+
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 9pt;
+  background: #eef1f5;
+  color: #7a2e8c;
+  padding: 0.5pt 1.5pt;
+  border-radius: 2px;
+}
+pre {
+  background: #f4f6f8;
+  border: 1px solid #dde3e9;
+  border-left: 3px solid #0b2f4c;
+  border-radius: 3px;
+  padding: 3mm 4mm;
+  font-size: 8.7pt;
+  overflow-x: auto;
+  break-inside: avoid;
+}
+pre code { background: none; color: #1f2937; padding: 0; }
+
+/* ---------- Tables ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 3mm 0 4mm 0;
+  font-size: 9pt;
+  break-inside: avoid;
+}
+th, td {
+  border: 1px solid #d6dbe1;
+  padding: 2.2mm 3mm;
+  text-align: left;
+  vertical-align: top;
+}
+thead th {
+  background: #0b2f4c;
+  color: #ffffff;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 600;
+  font-size: 8.7pt;
+}
+tbody tr:nth-child(even) { background: #f4f7fa; }
+
+/* ---------- Figures / diagrams ---------- */
+figure.diagram {
+  margin: 5mm 0;
+  text-align: center;
+  break-inside: avoid;
+}
+figure.diagram img {
+  max-width: 100%;
+  max-height: 95mm;
+}
+figure.diagram figcaption {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 8.3pt;
+  color: #6b7280;
+  margin-top: 2mm;
+  font-style: italic;
+}
+
+/* ---------- Callouts ---------- */
+.callout {
+  margin: 4mm 0;
+  padding: 3.5mm 4.5mm;
+  border-radius: 3px;
+  border-left: 3.5px solid;
+  break-inside: avoid;
+  font-size: 9.8pt;
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout-title {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 9.3pt;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 1.5mm;
+}
+.callout-important {
+  background: #fdf2f2;
+  border-left-color: #b3261e;
+}
+.callout-important .callout-title { color: #b3261e; }
+.callout-tip {
+  background: #f1f8f4;
+  border-left-color: #1e7a4a;
+}
+.callout-tip .callout-title { color: #1e7a4a; }
+.callout-note {
+  background: #eef4fb;
+  border-left-color: #0b5fa5;
+}
+.callout-note .callout-title { color: #0b5fa5; }
+.callout-warning {
+  background: #fef7e8;
+  border-left-color: #a3690b;
+}
+.callout-warning .callout-title { color: #a3690b; }
+
+.formula {
+  font-family: "Georgia", serif;
+  font-style: italic;
+  text-align: center;
+  background: #f4f7fa;
+  border: 1px solid #dde3e9;
+  border-radius: 3px;
+  padding: 4mm;
+  margin: 4mm 0;
+  font-size: 10.5pt;
+}
+
+blockquote {
+  margin: 3mm 0;
+  padding-left: 4mm;
+  border-left: 3px solid #c7cdd4;
+  color: #4b5563;
+  font-style: italic;
+}

@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    participant User as Usuario / App
+    participant Agent as Bedrock Agent (ReAct)
+    participant KB as Knowledge Base
+    participant Lambda as Action Group (Lambda)
+    participant API as Backend / API Externa
+
+    User->>Agent: Prompt ("Cancela mi pedido N° 104 y confirma reembolso")
+    Agent->>Agent: Pre-processing (Clasifica intención)
+    Agent->>KB: Consulta política de reembolsos
+    KB-->>Agent: Devuelve fragmentos de política
+    Agent->>Agent: Orchestration (Decide llamar a API de pedidos)
+    Agent->>Lambda: Invoca con parámetros parseados {order_id: 104}
+    Lambda->>API: Ejecuta cancelación en base de datos
+    API-->>Lambda: Status: Cancelled, Refund: 50.00
+    Lambda-->>Agent: Respuesta formateada
+    Agent->>Agent: Post-processing (Genera respuesta amigable)
+    Agent-->>User: "Tu pedido N° 104 ha sido cancelado. Reembolso: $50."

@@ -1,0 +1,8 @@
+graph TD
+    A[Requisito de Inferencia] --> B{¿Tiempo real o diferido?}
+    B -->|Diferido / Batch| C[Batch Inference S3<br>50% descuento en tokens]
+    B -->|Tiempo Real| D{¿Carga predecible / SLA estricto?}
+    D -->|Picos esporádicos / Variable| E[On-Demand Pay-per-token]
+    D -->|Capacidad garantizada / Sin Throttling| F[Provisioned Throughput<br>Model Units MUs]
+    E --> G{¿Problemas de cuota regional?}
+    G -->|Sí / Alta disponibilidad| H[Cross-Region Inference Profile]

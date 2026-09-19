@@ -1,0 +1,16 @@
+flowchart TD
+    subgraph Ingestion["1. FASE DE INGESTIÓN Y EMBEDDINGS"]
+        Doc[Documentos en Amazon S3] --> Chunk[Estrategia de Chunking<br/>Fixed / Hierarchical / Semantic]
+        Chunk --> Emb[Modelo de Embeddings<br/>Amazon Titan Text Embeddings]
+        Emb --> VDB[(Base de Datos Vectorial<br/>Amazon OpenSearch Serverless / RDS pgvector)]
+    end
+
+    VDB ==>|Recupera Chunks Semánticos| Search
+    
+    subgraph Generation["2. FASE DE RECUPERACIÓN Y GENERACIÓN RAG"]
+        User([Usuario / Aplicación]) --> Query[Consulta / Prompt]
+        Query --> Search[Búsqueda Híbrida Vectorial + Filtro de Metadatos]
+        Search --> Rerank[Modelo de Reranking Semántico<br/>Cohere Rerank / Bedrock Rerank]
+        Rerank --> LLM[Foundation Model Generador<br/>Anthropic Claude 3.5 / Amazon Nova]
+        LLM --> Resp([Respuesta Final con Citas y Atribución])
+    end
