@@ -3817,5 +3817,459 @@ export const QUESTIONS_PART_2: Question[] = [
     "category": "Diseño de Nuevas Soluciones",
     "multiSelect": false,
     "requiredCount": 1
+  },
+  {
+    "id": 30251,
+    "questionNumber": 251,
+    "question": "A company is creating a REST API to share information with six of its partners based in the United States. The company has created an Amazon API Gateway Regional endpoint. Each of the six partners will access the API once per day to post daily sales figures. After initial deployment, the company observes 1,000 requests per second originating from 500 different IP addresses around the world. The company believes this traffic is originating from a botnet and wants to secure its API while minimizing cost. Which approach should the company take to secure its API?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Create an Amazon CloudFront distribution with the API as the origin. Create an AWS WAF web ACL with a rule to block clients that submit more than five requests per day. Associate the web ACL with the CloudFront distribution. Configure CloudFront with an origin access identity (OAI) and associate it with the distribution. Configure API Gateway to ensure only the OAI can run the POST method.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Create an Amazon CloudFront distribution with the API as the origin. Create an AWS WAF web ACL with a rule to block clients that submit more than five requests per day. Associate the web ACL with the CloudFront distribution. Add a custom header to the CloudFront distribution populated with an API key. Configure the API to require an API key on the POST method.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Create an AWS WAF web ACL with a rule to allow access to the IP addresses used by the six partners. Associate the web ACL with the API. Create a resource policy with a request limit and associate it with the API. Configure the API to require an API key on the POST method.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Create an AWS WAF web ACL with a rule to allow access to the IP addresses used by the six partners. Associate the web ACL with the API. Create a usage plan with a request limit and associate it with the API. Create an API key and add it to the usage plan.",
+        "isCorrect": true
+      }
+    ],
+    "comments": "API REST en API Gateway (endpoint Regional) para 6 partners que la llaman 1 vez/día; aparecen 1.000 req/s desde 500 IPs (botnet). Asegurar la API minimizando coste.\n\nOpción A: CloudFront + WAF con regla de 'más de 5 req/día' y OAI hacia API Gateway. WAF rate-based no permite umbrales tan bajos como 5/día (el mínimo es mucho mayor y se evalúa en ventana de 5 min), y OAI es de S3, no de API Gateway. No encaja.\n\nOpción B: CloudFront + WAF con la misma regla de 5/día (inviable) y cabecera con API key. Mismo problema con el umbral y añade CloudFront (más coste) sin ser necesario.\n\nOpción C: WAF con regla de IPs permitidas + resource policy con 'request limit'. Las resource policies de API Gateway controlan QUIÉN invoca (IP/VPC/cuenta), no aplican límites de tasa; el throttling se hace con usage plans. Incorrecta.\n\nOpción D (Correcta): WAF web ACL permitiendo solo las IPs de los 6 partners asociado a la API + un usage plan con límite de peticiones + API key en el plan. WAF filtra el tráfico del botnet por IP y el usage plan + API key aplica throttling/cuotas por cliente. Solución nativa de API Gateway, de bajo coste y sin CloudFront. Correcta.\n\nReferencias:\nhttps://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-api-usage-plans.html\nhttps://docs.aws.amazon.com/waf/latest/developerguide/web-acl-ip-address-conditions.html",
+    "category": "Mejora Continua (Resiliencia, Seguridad y Rendimiento)",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30252,
+    "questionNumber": 252,
+    "question": "A company uses an Amazon Aurora PostgreSQL DB cluster for applications in a single AWS Region. The company's database team must monitor all data activity on all the databases. Which solution will achieve this goal?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Set up an AWS Database Migration Service (AWS DMS) change data capture (CDC) task. Specify the Aurora DB cluster as the source. Specify Amazon Kinesis Data Firehose as the target. Use Kinesis Data Firehose to upload the data into an Amazon OpenSearch Service cluster for further analysis.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Start a database activity stream on the Aurora DB cluster to capture the activity stream in Amazon EventBridge. Define an AWS Lambda function as a target for EventBridge. Program the Lambda function to decrypt the messages from EventBridge and to publish all database activity to Amazon S3 for further analysis.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Start a database activity stream on the Aurora DB cluster to push the activity stream to an Amazon Kinesis data stream. Configure Amazon Kinesis Data Firehose to consume the Kinesis data stream and to deliver the data to Amazon S3 for further analysis.",
+        "isCorrect": true
+      },
+      {
+        "letter": "D",
+        "text": "Set up an AWS Database Migration Service (AWS DMS) change data capture (CDC) task. Specify the Aurora DB cluster as the source. Specify Amazon Kinesis Data Firehose as the target. Use Kinesis Data Firehose to upload the data into an Amazon Redshift cluster. Run queries on the Amazon Redshift data to determine database activities on the Aurora database.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "Aurora PostgreSQL en una Región; el equipo debe MONITORIZAR toda la actividad de datos de todas las bases.\n\nOpción A: DMS CDC captura CAMBIOS de datos (inserts/updates/deletes), no toda la 'actividad' (incluidas lecturas/consultas auditadas). No es la herramienta de auditoría de actividad.\n\nOpción B: Database Activity Streams no publica en EventBridge; el stream se envía a un Kinesis DATA STREAM, no a EventBridge. Ruta técnicamente incorrecta.\n\nOpción C (Correcta): Iniciar un Database Activity Stream en el clúster Aurora, que empuja la actividad a un Amazon Kinesis data stream; Kinesis Data Firehose consume ese stream y entrega los registros a S3 para análisis. Es el mecanismo nativo de Aurora para auditar toda la actividad de la base de datos casi en tiempo real. Correcta.\n\nOpción D: De nuevo DMS CDC (solo cambios) hacia Redshift; no captura toda la actividad de la base de datos.\n\nReferencias:\nhttps://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/DBActivityStreams.html\nhttps://docs.aws.amazon.com/firehose/latest/dev/what-is-this-service.html",
+    "category": "Mejora Continua (Resiliencia, Seguridad y Rendimiento)",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30253,
+    "questionNumber": 253,
+    "question": "An entertainment company recently launched a new game. To ensure a good experience for players during the launch period, the company deployed a static quantity of 12 r6g.16xlarge (memory optimized) Amazon EC2 instances behind a Network Load Balancer. The company's operations team used the Amazon CloudWatch agent and a custom metric to include memory utilization in its monitoring strategy. Analysis of the CloudWatch metrics from the launch period showed consumption at about one quarter of the CPU and memory that the company expected. Initial demand for the game has subsided and has become more variable. The company decides to use an Auto Scaling group that monitors the CPU and memory consumption to dynamically scale the instance fleet. A solutions architect needs to configure the Auto Scaling group to meet demand in the most cost-effective way. Which solution will meet these requirements?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Configure the Auto Scaling group to deploy c6g.4xlarge (compute optimized) instances. Configure a minimum capacity of 3, a desired capacity of 3, and a maximum capacity of 12.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Configure the Auto Scaling group to deploy m6g.4xlarge (general purpose) instances. Configure a minimum capacity of 3, a desired capacity of 3, and a maximum capacity of 12.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Configure the Auto Scaling group to deploy r6g.4xlarge (memory optimized) instances. Configure a minimum capacity of 3, a desired capacity of 3, and a maximum capacity of 12.",
+        "isCorrect": true
+      },
+      {
+        "letter": "D",
+        "text": "Configure the Auto Scaling group to deploy r6g.8xlarge (memory optimized) instances. Configure a minimum capacity of 2, a desired capacity of 2, and a maximum capacity of 6.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "12 instancias r6g.16xlarge (memory optimized) fijas tras un NLB; las métricas muestran uso de ~1/4 de CPU y memoria esperadas. Ahora la demanda es variable y quieren un ASG que escale por CPU y memoria de la forma más rentable.\n\nOpción A: c6g (compute optimized) cambia la familia a una NO optimizada en memoria; la app es memory-intensive, así que reducir memoria relativa es arriesgado.\n\nOpción B: m6g (general purpose) también reduce el ratio de memoria frente a la familia r6g original; no es la mejor para carga memory optimized.\n\nOpción C (Correcta): Mantener la familia memory optimized pero bajar a r6g.4xlarge (1/4 del tamaño de la 16xlarge, coherente con el uso real de ~1/4) con min 3 / desired 3 / max 12. Conserva el perfil de memoria adecuado, ajusta el tamaño al consumo real y permite escalar. Es lo más rentable respetando el tipo de carga. Correcta.\n\nOpción D: r6g.8xlarge con max 6 mantiene instancias sobredimensionadas (la mitad del original, cuando el uso es ~1/4) y menor capacidad de escalado; menos ajustado al consumo real que la C.\n\nReferencias:\nhttps://docs.aws.amazon.com/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html\nhttps://docs.aws.amazon.com/whitepapers/latest/cost-optimization-right-sizing/cost-optimization-right-sizing.html",
+    "category": "Optimización de Costes",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30254,
+    "questionNumber": 254,
+    "question": "A financial services company loaded millions of historical stock trades into an Amazon DynamoDB table. The table uses on-demand capacity mode. Once each day at midnight, a few million new records are loaded into the table. Application read activity against the table happens in bursts throughout the day. and a limited set of keys are repeatedly looked up. The company needs to reduce costs associated with DynamoDB. Which strategy should a solutions architect recommend to meet this requirement?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Deploy an Amazon ElastiCache cluster in front of the DynamoDB table",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Deploy DynamoDB Accelerator (DAX). Configure DynamoDB auto scaling. Purchase Savings Plans in Cost Explorer.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Use provisioned capacity mode. Purchase Savings Plans in Cost Explorer.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Deploy DynamoDB Accelerator (DAX). Use provisioned capacity mode. Configure DynamoDB auto scaling.",
+        "isCorrect": true
+      }
+    ],
+    "comments": "DynamoDB con millones de trades en modo ON-DEMAND. Carga diaria masiva a medianoche y lecturas en ráfagas durante el día repitiendo un conjunto limitado de claves. Reducir costes.\n\nOpción A: ElastiCache delante de DynamoDB requiere gestionar la caché e integrarla en la app; DAX es la caché nativa de DynamoDB y encaja mejor para el patrón de claves repetidas.\n\nOpción B: DAX + auto scaling + Savings Plans. DynamoDB NO se cubre con Savings Plans (los SP aplican a cómputo tipo EC2/Fargate/Lambda); el ahorro en DynamoDB provisionado se logra con Reserved Capacity, no con SP. Incorrecta.\n\nOpción C: Solo provisioned + Savings Plans; mismo error de los SP y sin caché para las claves repetidas.\n\nOpción D (Correcta): DAX (cachea las claves consultadas repetidamente, reduce RCUs y latencia) + modo PROVISIONED (más barato que on-demand para carga predecible) + auto scaling (absorbe las ráfagas y la carga nocturna ajustando capacidad). Es la combinación que reduce coste para este patrón. Correcta.\n\nReferencias:\nhttps://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DAX.html\nhttps://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html",
+    "category": "Optimización de Costes",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30255,
+    "questionNumber": 255,
+    "question": "A company is creating a centralized logging service running on Amazon EC2 that will receive and analyze logs from hundreds of AWS accounts. AWS PrivateLink is being used to provide connectivity between the client services and the logging service. In each AWS account with a client, an interface endpoint has been created for the logging service and is available. The logging service running on EC2 instances with a Network Load Balancer (NLB) are deployed in different subnets. The clients are unable to submit logs using the VPC endpoint. Which combination of steps should a solutions architect take to resolve this issue? (Choose two.)",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Check that the NACL is attached to the logging service subnet to allow communications to and from the NLB subnets. Check that the NACL is attached to the NLB subnet to allow communications to and from the logging service subnets running on EC2 instances.",
+        "isCorrect": true
+      },
+      {
+        "letter": "B",
+        "text": "Check that the NACL is attached to the logging service subnets to allow communications to and from the interface endpoint subnets. Check that the NACL is attached to the interface endpoint subnet to allow communications to and from the logging service subnets running on EC2 instances.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Check the security group for the logging service running on the EC2 instances to ensure it allows ingress from the NLB subnets.",
+        "isCorrect": true
+      },
+      {
+        "letter": "D",
+        "text": "Check the security group for the logging service running on EC2 instances to ensure it allows ingress from the clients.",
+        "isCorrect": false
+      },
+      {
+        "letter": "E",
+        "text": "Check the security group for the NLB to ensure it allows ingress from the interface endpoint subnets.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "Servicio de logging centralizado en EC2 tras un NLB, expuesto por AWS PrivateLink; en cada cuenta cliente hay un interface endpoint. Los clientes NO pueden enviar logs por el VPC endpoint. Elegir DOS pasos para resolverlo.\n\nOpción A (Correcta): Revisar las NACL de las subredes del servicio de logging y de las subredes del NLB para permitir la comunicación en ambos sentidos entre ellas. El tráfico llega al NLB y de ahí a las EC2; las NACL de esas subredes deben permitirlo.\n\nOpción B: Enlaza las NACL del servicio con las 'subredes del interface endpoint'. Con PrivateLink el endpoint está en la VPC del CLIENTE; el tráfico llega al NLB del proveedor y desde el NLB a las EC2. Mirar NACL contra el endpoint del cliente no resuelve la ruta interna del proveedor.\n\nOpción C (Correcta): Revisar el security group de las EC2 del servicio de logging para que permita ingress desde las subredes del NLB. Como el NLB reenvía el tráfico, las EC2 ven las IPs privadas del NLB/subredes; el SG de destino debe permitirlas.\n\nOpción D: SG de las EC2 permitiendo ingress 'desde los clientes'. Tras el NLB, las EC2 no ven las IPs de los clientes sino las del NLB, así que permitir 'los clientes' no es lo que desbloquea el tráfico.\n\nOpción E: SG del NLB desde las subredes del endpoint. Los NLB clásicos no usan security groups para su reenvío de esta forma; el control está en NACL y en el SG de los targets (EC2). No es uno de los dos pasos correctos.\n\nReferencias:\nhttps://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-share-your-services.html\nhttps://docs.aws.amazon.com/elasticloadbalancing/latest/network/target-group-register-targets.html",
+    "category": "Complejidad Organizativa",
+    "multiSelect": true,
+    "requiredCount": 2
+  },
+  {
+    "id": 30256,
+    "questionNumber": 256,
+    "question": "A company has millions of objects in an Amazon S3 bucket. The objects are in the S3 Standard storage class. All the S3 objects are accessed frequently. The number of users and applications that access the objects is increasing rapidly. The objects are encrypted with server-side encryption with AWS KMS keys (SSE-KMS). A solutions architect reviews the company’s monthly AWS invoice and notices that AWS KMS costs are increasing because of the high number of requests from Amazon S3. The solutions architect needs to optimize costs with minimal changes to the application. Which solution will meet these requirements with the LEAST operational overhead?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Create a new S3 bucket that has server-side encryption with customer-provided keys (SSE-C) as the encryption type. Copy the existing objects to the new S3 bucket. Specify SSE-C.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Create a new S3 bucket that has server-side encryption with Amazon S3 managed keys (SSE-S3) as the encryption type. Use S3 Batch Operations to copy the existing objects to the new S3 bucket. Specify SSE-S3.",
+        "isCorrect": true
+      },
+      {
+        "letter": "C",
+        "text": "Use AWS CloudHSM to store the encryption keys. Create a new S3 bucket. Use S3 Batch Operations to copy the existing objects to the new S3 bucket. Encrypt the objects by using the keys from CloudHSM.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Use the S3 Intelligent-Tiering storage class for the S3 bucket. Create an S3 Intelligent-Tiering archive configuration to transition objects that are not accessed for 90 days to S3 Glacier Deep Archive.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "Millones de objetos en S3 Standard, TODOS de acceso frecuente, cifrados con SSE-KMS. Sube el coste de KMS por el alto número de peticiones desde S3. Optimizar coste con cambios mínimos y el MENOR overhead.\n\nOpción A: SSE-C (claves aportadas por el cliente) obliga a la app a enviar la clave en cada petición; gran cambio operativo y de gestión de claves.\n\nOpción B (Correcta): Crear un bucket nuevo con SSE-S3 (claves gestionadas por S3) y usar S3 Batch Operations para copiar los objetos existentes especificando SSE-S3. SSE-S3 NO genera cargos por petición a KMS, eliminando el coste que crecía; y como los objetos siguen de acceso frecuente, cambiar de clase no aplica. Menor overhead para el objetivo de coste de KMS. Correcta. (Nota: alternativa válida en el mundo real sería activar S3 Bucket Keys sobre SSE-KMS, que reduce las peticiones a KMS hasta ~99%, pero no está entre las opciones.)\n\nOpción C: CloudHSM añade infraestructura y gestión de claves; aumenta el overhead, justo lo contrario de lo pedido.\n\nOpción D: S3 Intelligent-Tiering + archivado a Glacier Deep Archive es para datos con acceso variable/infrecuente; aquí el acceso es FRECUENTE, añade tarifa de monitorización por objeto y no ataca el coste de peticiones a KMS.\n\nReferencias:\nhttps://docs.aws.amazon.com/AmazonS3/latest/userguide/UsingServerSideEncryption.html\nhttps://docs.aws.amazon.com/AmazonS3/latest/userguide/bucket-key.html",
+    "category": "Optimización de Costes",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30257,
+    "questionNumber": 257,
+    "question": "A media storage application uploads user photos to Amazon S3 for processing by AWS Lambda functions. Application state is stored in Amazon DynamoDB tables. Users are reporting that some uploaded photos are not being processed properly. The application developers trace the logs and find that Lambda is experiencing photo processing issues when thousands of users upload photos simultaneously. The issues are the result of Lambda concurrency limits and the performance of DynamoDB when data is saved. Which combination of actions should a solutions architect take to increase the performance and reliability of the application? (Choose two.)",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Evaluate and adjust the RCUs for the DynamoDB tables.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Evaluate and adjust the WCUs for the DynamoDB tables.",
+        "isCorrect": true
+      },
+      {
+        "letter": "C",
+        "text": "Add an Amazon ElastiCache layer to increase the performance of Lambda functions.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Add an Amazon Simple Queue Service (Amazon SQS) queue and reprocessing logic between Amazon S3 and the Lambda functions.",
+        "isCorrect": true
+      },
+      {
+        "letter": "E",
+        "text": "Use S3 Transfer Acceleration to provide lower latency to users.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "App multimedia: usuarios suben fotos a S3, Lambda las procesa y el estado va a DynamoDB. Fallos al procesar cuando miles suben a la vez, por límites de concurrencia de Lambda y rendimiento de DynamoDB AL GUARDAR. Elegir DOS acciones para mejorar rendimiento y fiabilidad.\n\nOpción A: Ajustar RCUs (lecturas). El cuello de botella descrito es al GUARDAR (escrituras), no leer; RCUs no atacan el problema.\n\nOpción B (Correcta): Ajustar las WCUs de las tablas DynamoDB. El problema de rendimiento aparece al escribir el estado; aumentar/ajustar la capacidad de ESCRITURA (o habilitar auto scaling/on-demand) resuelve el throttling de escritura.\n\nOpción C: ElastiCache 'para acelerar Lambda' no aborda ni la concurrencia de Lambda ni las escrituras en DynamoDB; una caché de lectura no ayuda aquí.\n\nOpción D (Correcta): Introducir una cola SQS (con lógica de reprocesado) entre S3 y Lambda. La cola desacopla la ingesta de los picos, amortigua la concurrencia de Lambda y permite reintentar los mensajes que fallan, aumentando la fiabilidad.\n\nOpción E: S3 Transfer Acceleration mejora la latencia de SUBIDA de los usuarios, no los límites de concurrencia de Lambda ni las escrituras en DynamoDB.\n\nReferencias:\nhttps://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html\nhttps://docs.aws.amazon.com/lambda/latest/dg/with-sqs.html",
+    "category": "Diseño de Nuevas Soluciones",
+    "multiSelect": true,
+    "requiredCount": 2
+  },
+  {
+    "id": 30258,
+    "questionNumber": 258,
+    "question": "A company runs an application in an on-premises data center. The application gives users the ability to upload media files. The files persist in a file server. The web application has many users. The application server is overutilized, which causes data uploads to fail occasionally. The company frequently adds new storage to the file server. The company wants to resolve these challenges by migrating the application to AWS. Users from across the United States and Canada access the application. Only authenticated users should have the ability to access the application to upload files. The company will consider a solution that refactors the application, and the company needs to accelerate application development. Which solution will meet these requirements with the LEAST operational overhead?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Use AWS Application Migration Service to migrate the application server to Amazon EC2 instances. Create an Auto Scaling group for the EC2 instances. Use an Application Load Balancer to distribute the requests. Modify the application to use Amazon S3 to persist the files. Use Amazon Cognito to authenticate users.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Use AWS Application Migration Service to migrate the application server to Amazon EC2 instances. Create an Auto Scaling group for the EC2 instances. Use an Application Load Balancer to distribute the requests. Set up AWS IAM Identity Center (AWS Single Sign-On) to give users the ability to sign in to the application. Modify the application to use Amazon S3 to persist the files.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Create a static website for uploads of media files. Store the static assets in Amazon S3. Use AWS AppSync to create an API. Use AWS Lambda resolvers to upload the media files to Amazon S3. Use Amazon Cognito to authenticate users.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Use AWS Amplify to create a static website for uploads of media files. Use Amplify Hosting to serve the website through Amazon CloudFront. Use Amazon S3 to store the uploaded media files. Use Amazon Cognito to authenticate users.",
+        "isCorrect": true
+      }
+    ],
+    "comments": "App on-premises donde los usuarios suben ficheros a un file server; el servidor de aplicación está sobrecargado y las subidas fallan, y añaden almacenamiento con frecuencia. Migrar a AWS; usuarios en EE.UU./Canadá; solo usuarios AUTENTICADOS pueden subir; admiten REFACTORIZAR y quieren ACELERAR el desarrollo con el MENOR overhead.\n\nOpción A: Application Migration Service (rehost) migra el servidor tal cual a EC2 + ASG + ALB. Es lift-and-shift, no acelera el desarrollo ni refactoriza; mantiene servidores que gestionar (más overhead).\n\nOpción B: También rehost a EC2 + ASG + ALB con IAM Identity Center para el login. IAM Identity Center es para acceso de la fuerza de trabajo a cuentas/apps corporativas, no para autenticar usuarios finales de una app web; y sigue siendo lift-and-shift con servidores.\n\nOpción C: Sitio estático + AppSync (GraphQL) + Lambda resolvers para subir a S3 + Cognito. Funciona pero añade complejidad (API GraphQL y resolvers) frente a una solución de framework fullstack gestionado; más piezas que construir/operar.\n\nOpción D (Correcta): AWS Amplify para crear el sitio estático, Amplify Hosting sirviéndolo por CloudFront, S3 para los ficheros subidos y Cognito para autenticar. Amplify acelera el desarrollo (framework fullstack gestionado), CloudFront cubre EE.UU./Canadá, S3 elimina la gestión de almacenamiento del file server y Cognito limita a usuarios autenticados. Menor overhead y desarrollo acelerado. Correcta.\n\nReferencias:\nhttps://docs.aws.amazon.com/amplify/latest/userguide/welcome.html\nhttps://docs.aws.amazon.com/cognito/latest/developerguide/what-is-amazon-cognito.html",
+    "category": "Migración y Modernización",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30259,
+    "questionNumber": 259,
+    "question": "A company has an application that is deployed on Amazon EC2 instances behind an Application Load Balancer (ALB). The instances are part of an Auto Scaling group. The application has unpredictable workloads and frequently scales out and in. The company’s development team wants to analyze application logs to find ways to improve the application's performance. However, the logs are no longer available after instances scale in. Which solution will give the development team the ability to view the application logs after a scale-in event?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Enable access logs for the ALB. Store the logs in an Amazon S3 bucket.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Configure the EC2 instances to publish logs to Amazon CloudWatch Logs by using the unified CloudWatch agent.",
+        "isCorrect": true
+      },
+      {
+        "letter": "C",
+        "text": "Modify the Auto Scaling group to use a step scaling policy.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Instrument the application with AWS X-Ray tracing.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "App en EC2 tras un ALB en un ASG que escala out/in con frecuencia. Los logs de la app se PIERDEN cuando las instancias hacen scale-in. Poder ver los logs tras el scale-in.\n\nOpción A: Los access logs del ALB registran las peticiones al balanceador, no los logs de APLICACIÓN de las instancias; no recuperan lo que interesa analizar.\n\nOpción B (Correcta): Configurar las EC2 para publicar sus logs en Amazon CloudWatch Logs con el unified CloudWatch agent. Así los logs salen de la instancia y persisten centralizados aunque la instancia se termine en un scale-in. Resuelve exactamente el problema. Correcta.\n\nOpción C: Cambiar a step scaling solo modifica CÓMO escala el ASG; no preserva ningún log.\n\nOpción D: AWS X-Ray añade trazas de peticiones (latencias, mapa de servicios), no los logs de aplicación que el equipo quiere analizar tras el scale-in.\n\nReferencias:\nhttps://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html\nhttps://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch-Agent-Overview.html",
+    "category": "Mejora Continua (Resiliencia, Seguridad y Rendimiento)",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30260,
+    "questionNumber": 260,
+    "question": "A company runs an unauthenticated static website (www.example.com) that includes a registration form for users. The website uses Amazon S3 for hosting and uses Amazon CloudFront as the content delivery network with AWS WAF configured. When the registration form is submitted, the website calls an Amazon API Gateway API endpoint that invokes an AWS Lambda function to process the payload and forward the payload to an external API call. During testing, a solutions architect encounters a cross-origin resource sharing (CORS) error. The solutions architect confirms that the CloudFront distribution origin has the Access-Control-Allow-Origin header set to www.example.com. What should the solutions architect do to resolve the error?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Change the CORS configuration on the S3 bucket. Add rules for CORS to the AllowedOrigin element for www.example.com.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Enable the CORS setting in AWS WAF. Create a web ACL rule in which the Access-Control-Allow-Origin header is set to www.example.com.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Enable the CORS setting on the API Gateway API endpoint. Ensure that the API endpoint is configured to return all responses that have the Access-Control-Allow-Origin header set to www.example.com.",
+        "isCorrect": true
+      },
+      {
+        "letter": "D",
+        "text": "Enable the CORS setting on the Lambda function. Ensure that the return code of the function has the Access-Control-Allow-Origin header set to www.example.com.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "Sitio estático en S3 servido por CloudFront con WAF; el formulario llama a un endpoint de API Gateway que invoca Lambda y reenvía a una API externa. En pruebas aparece un error CORS; el origen de CloudFront ya tiene Access-Control-Allow-Origin = www.example.com. Resolver el error.\n\nOpción A: Cambiar el CORS del bucket S3. El navegador falla al llamar a la API Gateway, no a S3; el CORS de S3 no interviene en las llamadas a la API.\n\nOpción B: 'Activar CORS en WAF' con una regla que ponga la cabecera. WAF filtra peticiones, no gestiona CORS ni inyecta cabeceras Access-Control-*; no es su función.\n\nOpción C (Correcta): Activar CORS en el endpoint de API Gateway y asegurar que la API responde con la cabecera Access-Control-Allow-Origin = www.example.com (incluida la respuesta al preflight OPTIONS). El error CORS surge en la llamada del navegador a la API, así que es la API la que debe devolver las cabeceras CORS. Correcta.\n\nOpción D: Devolver la cabecera solo desde la Lambda no basta con integración proxy si no se configura CORS/OPTIONS en API Gateway; además el preflight OPTIONS lo responde API Gateway. Configurar CORS en API Gateway (C) es la solución correcta y completa.\n\nReferencias:\nhttps://docs.aws.amazon.com/apigateway/latest/developerguide/how-to-cors.html\nhttps://docs.aws.amazon.com/apigateway/latest/developerguide/apigateway-enable-cors-console.html",
+    "category": "Diseño de Nuevas Soluciones",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30261,
+    "questionNumber": 261,
+    "question": "A company has many separate AWS accounts and uses no central billing or management. Each AWS account hosts services for different departments in the company. The company has a Microsoft Azure Active Directory that is deployed. A solutions architect needs to centralize billing and management of the company’s AWS accounts. The company wants to start using identity federation instead of manual user management. The company also wants to use temporary credentials instead of long-lived access keys. Which combination of steps will meet these requirements? (Choose three.)",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Create a new AWS account to serve as a management account. Deploy an organization in AWS Organizations. Invite each existing AWS account to join the organization. Ensure that each account accepts the invitation.",
+        "isCorrect": true
+      },
+      {
+        "letter": "B",
+        "text": "Configure each AWS account's email address to be aws+ @example.com so that account management email messages and invoices are sent to the same place.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Deploy AWS IAM Identity Center (AWS Single Sign-On) in the management account. Connect IAM Identity Center to the Azure Active Directory. Configure IAM Identity Center for automatic synchronization of users and groups.",
+        "isCorrect": true
+      },
+      {
+        "letter": "D",
+        "text": "Deploy an AWS Managed Microsoft AD directory in the management account. Share the directory with all other accounts in the organization by using AWS Resource Access Manager (AWS RAM).",
+        "isCorrect": false
+      },
+      {
+        "letter": "E",
+        "text": "Create AWS IAM Identity Center (AWS Single Sign-On) permission sets. Attach the permission sets to the appropriate IAM Identity Center groups and AWS accounts.",
+        "isCorrect": true
+      },
+      {
+        "letter": "F",
+        "text": "Configure AWS Identity and Access Management (IAM) in each AWS account to use AWS Managed Microsoft AD for authentication and authorization.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "Centralizar facturación y gestión de muchas cuentas AWS con federación de identidades desde Azure AD y credenciales temporales, con el MENOR esfuerzo de gestión manual (elegir tres).\n\nOpción A (Correcta): crear una management account y desplegar AWS Organizations invitando a las cuentas existentes centraliza facturación y gobierno.\nOpción C (Correcta): IAM Identity Center conectado a Azure AD con sincronización automática (SCIM) aporta federación y elimina la gestión manual de usuarios.\nOpción E (Correcta): los permission sets de IAM Identity Center entregan credenciales temporales por rol asignadas a grupos y cuentas.\nOpción B: unificar el email de facturación no aporta federación ni credenciales temporales.\nOpción D: AWS Managed Microsoft AD compartido por RAM no es necesario cuando ya se usa Azure AD vía Identity Center.\nOpción F: configurar IAM en cada cuenta contra Managed Microsoft AD perpetúa la gestión distribuida y no usa credenciales temporales federadas.\n\nReferencias:\nhttps://docs.aws.amazon.com/singlesignon/latest/userguide/what-is.html\nhttps://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_accounts_invites.html",
+    "category": "Complejidad Organizativa",
+    "multiSelect": true,
+    "requiredCount": 3
+  },
+  {
+    "id": 30262,
+    "questionNumber": 262,
+    "question": "A company wants to manage the costs associated with a group of 20 applications that are infrequently used, but are still business-critical, by migrating to AWS. The applications are a mix of Java and Node.js spread across different instance clusters. The company wants to minimize costs while standardizing by using a single deployment methodology. Most of the applications are part of month-end processing routines with a small number of concurrent users, but they are occasionally run at other times. Average application memory consumption is less than 1 GB. though some applications use as much as 2.5 GB of memory during peak processing. The most important application in the group is a billing report written in Java that accesses multiple data sources and often runs for several hours. Which is the MOST cost-effective solution?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Deploy a separate AWS Lambda function for each application. Use AWS CloudTrail logs and Amazon CloudWatch alarms to verify completion of critical jobs.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Deploy Amazon ECS containers on Amazon EC2 with Auto Scaling configured for memory utilization of 75%. Deploy an ECS task for each application being migrated with ECS task scaling. Monitor services and hosts by using Amazon CloudWatch.",
+        "isCorrect": true
+      },
+      {
+        "letter": "C",
+        "text": "Deploy AWS Elastic Beanstalk for each application with Auto Scaling to ensure that all requests have sufficient resources. Monitor each AWS Elastic Beanstalk deployment by using CloudWatch alarms.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Deploy a new Amazon EC2 instance cluster that co-hosts all applications by using EC2 Auto Scaling and Application Load Balancers. Scale cluster size based on a custom metric set on instance memory utilization. Purchase 3-year Reserved Instance reservations equal to the GroupMaxSize parameter of the Auto Scaling group.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "20 aplicaciones Java/Node.js poco usadas pero críticas, con picos de memoria hasta 2,5 GB y un job de facturación en Java que corre VARIAS HORAS; se busca la solución MÁS rentable con una metodología de despliegue única.\n\nOpción B (Correcta): ECS sobre EC2 con Auto Scaling y una tarea por aplicación estandariza el despliegue en contenedores, soporta jobs de larga duración y ajusta capacidad al uso intermitente reduciendo coste.\nOpción A: Lambda tiene límite de 15 minutos de ejecución, por lo que el informe de facturación de varias horas no cabe.\nOpción C: un Elastic Beanstalk con Auto Scaling por aplicación multiplica entornos infrautilizados y encarece frente a contenedores compartidos.\nOpción D: reservar RIs de 3 años al GroupMaxSize paga capacidad pico permanente para cargas infrecuentes, lo más caro.\n\nReferencias:\nhttps://docs.aws.amazon.com/AmazonECS/latest/developerguide/service-auto-scaling.html\nhttps://docs.aws.amazon.com/AmazonECS/latest/developerguide/cluster-auto-scaling.html",
+    "category": "Optimización de Costes",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30263,
+    "questionNumber": 263,
+    "question": "A solutions architect needs to review the design of an Amazon EMR cluster that is using the EMR File System (EMRFS). The cluster performs tasks that are critical to business needs. The cluster is running Amazon EC2 On-Demand Instances at all times for all task, primary, and core nodes. The EMR tasks run each morning, starting at 1:00 AM. and take 6 hours to finish running. The amount of time to complete the processing is not a priority because the data is not referenced until late in the day. The solutions architect must review the architecture and suggest a solution to minimize the compute costs. Which solution should the solutions architect recommend to meet these requirements?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Launch all task, primary, and core nodes on Spot Instances in an instance fleet. Terminate the cluster, including all instances, when the processing is completed.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Launch the primary and core nodes on On-Demand Instances. Launch the task nodes on Spot Instances in an instance fleet. Terminate the cluster, including all instances, when the processing is completed. Purchase Compute Savings Plans to cover the On-Demand Instance usage.",
+        "isCorrect": true
+      },
+      {
+        "letter": "C",
+        "text": "Continue to launch all nodes on On-Demand Instances. Terminate the cluster, including all instances, when the processing is completed. Purchase Compute Savings Plans to cover the On-Demand Instance usage.",
+        "isCorrect": false
+      },
+      {
+        "letter": "D",
+        "text": "Launch the primary and core nodes on On-Demand Instances. Launch the task nodes on Spot Instances in an instance fleet. Terminate only the task node instances when the processing is completed. Purchase Compute Savings Plans to cover the On-Demand Instance usage.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "Cluster EMR con EMRFS que corre a diario 6 horas sin urgencia de tiempo; hay que MINIMIZAR el coste de cómputo manteniendo la fiabilidad del procesamiento.\n\nOpción B (Correcta): primary y core en On-Demand (protegen HDFS/estado y evitan pérdida por interrupción Spot), task nodes en Spot (baratos y reemplazables), terminar el cluster al acabar y cubrir el On-Demand con Compute Savings Plans.\nOpción A: poner primary y core en Spot arriesga la terminación del cluster y la pérdida del trabajo, comprometiendo tareas críticas.\nOpción C: mantener todo On-Demand no aprovecha el ahorro de Spot en los task nodes.\nOpción D: terminar solo los task nodes deja primary y core encendidos pagando cómputo cuando ya no se necesita.\n\nReferencias:\nhttps://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-instance-purchasing-options.html\nhttps://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-instance-fleet.html",
+    "category": "Optimización de Costes",
+    "multiSelect": false,
+    "requiredCount": 1
+  },
+  {
+    "id": 30264,
+    "questionNumber": 264,
+    "question": "A company has migrated a legacy application to the AWS Cloud. The application runs on three Amazon EC2 instances that are spread across three Availability Zones. One EC2 instance is in each Availability Zone. The EC2 instances are running in three private subnets of the VPC and are set up as targets for an Application Load Balancer (ALB) that is associated with three public subnets. The application needs to communicate with on-premises systems. Only traffic from IP addresses in the company's IP address range are allowed to access the on-premises systems. The company’s security team is bringing only one IP address from its internal IP address range to the cloud. The company has added this IP address to the allow list for the company firewall. The company also has created an Elastic IP address for this IP address. A solutions architect needs to create a solution that gives the application the ability to communicate with the on-premises systems. The solution also must be able to mitigate failures automatically. Which solution will meet these requirements?",
+    "choices": [
+      {
+        "letter": "A",
+        "text": "Deploy three NAT gateways, one in each public subnet. Assign the Elastic IP address to the NAT gateways. Turn on health checks for the NAT gateways. If a NAT gateway fails a health check, recreate the NAT gateway and assign the Elastic IP address to the new NAT gateway.",
+        "isCorrect": false
+      },
+      {
+        "letter": "B",
+        "text": "Replace the ALB with a Network Load Balancer (NLB). Assign the Elastic IP address to the NLTurn on health checks for the NLIn the case of a failed health check, redeploy the NLB in different subnets.",
+        "isCorrect": false
+      },
+      {
+        "letter": "C",
+        "text": "Deploy a single NAT gateway in a public subnet. Assign the Elastic IP address to the NAT gateway. Use Amazon CloudWatch with a custom metric to monitor the NAT gateway. If the NAT gateway is unhealthy, invoke an AWS Lambda function to create a new NAT gateway in a different subnet. Assign the Elastic IP address to the new NAT gateway.",
+        "isCorrect": true
+      },
+      {
+        "letter": "D",
+        "text": "Assign the Elastic IP address to the ALB. Create an Amazon Route 53 simple record with the Elastic IP address as the value. Create a Route 53 health check. In the case of a failed health check, recreate the ALB in different subnets.",
+        "isCorrect": false
+      }
+    ],
+    "comments": "La app en subredes privadas debe salir a on-premises con UNA sola IP permitida (Elastic IP) y con recuperación AUTOMÁTICA ante fallos.\n\nOpción C (Correcta): un único NAT gateway con la Elastic IP asignada da la IP fija exigida; CloudWatch más una Lambda recrean el NAT en otra subred y reasignan la EIP si falla, mitigando la caída automáticamente.\nOpción A: tres NAT gateways no pueden compartir la misma Elastic IP y romperían la restricción de una sola IP.\nOpción B: un NLB con EIP expone la app, no resuelve el tráfico saliente hacia on-premises con IP de origen fija.\nOpción D: asignar la EIP al ALB no aplica al tráfico saliente hacia on-premises y no cumple el requisito.\n\nReferencias:\nhttps://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html\nhttps://docs.aws.amazon.com/vpc/latest/userguide/vpc-eips.html",
+    "category": "Mejora Continua (Resiliencia, Seguridad y Rendimiento)",
+    "multiSelect": false,
+    "requiredCount": 1
   }
 ];
